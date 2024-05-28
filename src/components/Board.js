@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Dimensions,
   Button,
   StyleSheet,
+  Animated
 } from 'react-native';
 import Tile from '../components/Tile';
 
@@ -17,7 +18,7 @@ const defaultState = [
   [0, 0, 0],
 ];
 
-const getBackgroundColor = item => {
+const getTileColor = item => {
   if (item === 1) {
     return 'blue';
   }
@@ -30,6 +31,12 @@ const Board = () => {
   const [boardState, setBoardState] = useState(defaultState);
   const [player, setPlayer] = useState(1);
   const [victory, setVictory] = useState(false);
+  const animatedColor = useRef(new Animated.Value(0)).current;
+
+ const backgroundColor = animatedColor.interpolate({
+    inputRange:[1,2],
+    outputRange:['#add8e6', '#f89494']
+  })
   const handleStartNewGame = () => {
     setBoardState(defaultState);
     setVictory(false);
@@ -76,6 +83,23 @@ const Board = () => {
       Alert.alert('you win');
     }
   }, [victory]);
+  useEffect(() => {
+    if(player === 1){
+      Animated.timing(animatedColor, {
+        toValue: 1,
+        duration:500,
+        useNativeDriver: true,
+      }).start()
+    }
+    if(player === 2){
+      Animated.timing(animatedColor, {
+        toValue: 2,
+        duration:500,
+        useNativeDriver: true,
+      }).start()
+    }
+  
+  },[player])
   const handlePressItem = (row, index, item) => () => {
     const itemIndex = index;
     if (item !== 0) {
@@ -106,14 +130,6 @@ const Board = () => {
 
     setBoardState(newState);
   };
-  const getBackgroundColor = item => {
-    if (item === 1) {
-      return 'blue';
-    }
-    if (item === 2) {
-      return 'red';
-    }
-  };
   const firstRow = boardState[0].map((item, index) => {
     return (
       <TouchableOpacity
@@ -127,7 +143,7 @@ const Board = () => {
         onPress={handlePressItem(0, index, item)}>
         <View
           style={{
-            backgroundColor: getBackgroundColor(item),
+            backgroundColor: getTileColor(item),
             height: deviceWidth / 3.5,
             width: deviceWidth / 3.5,
             borderRadius: 100,
@@ -150,7 +166,7 @@ const Board = () => {
       onPress={handlePressItem(1, index, item)}>
       <View
         style={{
-          backgroundColor: getBackgroundColor(item),
+          backgroundColor: getTileColor(item),
           height: deviceWidth / 3.5,
           width: deviceWidth / 3.5,
           borderRadius: 100,
@@ -170,7 +186,7 @@ const Board = () => {
       onPress={handlePressItem(2, index, item)}>
       <View
         style={{
-          backgroundColor: getBackgroundColor(item),
+          backgroundColor: getTileColor(item),
           height: deviceWidth / 3.5,
           width: deviceWidth / 3.5,
           borderRadius: 100,
@@ -185,15 +201,7 @@ const Board = () => {
   ));
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: victory
-          ? 'white'
-          : player === 1
-          ? '#add8e6'
-          : '#f89494',
-      }}>
+    <Animated.View style={{flex:1, backgroundColor:backgroundColor}}>
       <View style={{marginTop: '20%'}}>
         <View style={{flexDirection: 'row', backgroundColor: 'white'}}>
           {firstRow}
@@ -223,7 +231,7 @@ const Board = () => {
           New game
         </Text>
       </TouchableOpacity>
-    </View>
+      </Animated.View>
   );
 };
 
