@@ -1,125 +1,94 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, Alert, Dimensions, Button, StyleSheet} from 'react-native';
-import Tile from '../components/Tile'
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+  Dimensions,
+  Button,
+  StyleSheet,
+} from 'react-native';
+import Tile from '../components/Tile';
 
 const deviceWidth = Dimensions.get('window').width;
 const defaultState = [
-    [0, 0, 0],
-    [0, 0, 0],
-    [0, 0, 0],
-  ]
+  [0, 0, 0],
+  [0, 0, 0],
+  [0, 0, 0],
+];
 
-  const getBackgroundColor = item => {
-    if (item === 1) {
-      return 'blue';
-    }
-    if (item === 2) {
-      return 'red';
-    }
-  };
-
+const getBackgroundColor = item => {
+  if (item === 1) {
+    return 'blue';
+  }
+  if (item === 2) {
+    return 'red';
+  }
+};
 
 const Board = () => {
   const [boardState, setBoardState] = useState(defaultState);
   const [player, setPlayer] = useState(1);
-  const [victory, setVictory] = useState(false)
+  const [victory, setVictory] = useState(false);
   const handleStartNewGame = () => {
-    setBoardState(defaultState)
-setVictory(false)}
-  const checkVictory = () => {
-    if (
-      boardState[0][0] &&
-      boardState[0][0] === boardState[0][1] &&
-      boardState[0][1] === boardState[0][2]
-    ) {
-      return true;
-    }
-    if (
-      boardState[1][0] &&
-      boardState[1][0] === boardState[1][1] &&
-      boardState[1][1] === boardState[1][2]
-    ) {
-      return true;
-    }
-    if (
-      boardState[2][0] &&
-      boardState[2][0] === boardState[2][1] &&
-      boardState[2][1] === boardState[2][2]
-    ) {
-      return true;
-    }
-    if (
-      boardState[0][0] &&
-      boardState[0][0] === boardState[1][0] &&
-      boardState[1][0] === boardState[2][0]
-    ) {
-      return true;
-    }
-    if (
-      boardState[0][1] &&
-      boardState[0][1] === boardState[1][1] &&
-      boardState[1][1] === boardState[2][1]
-    ) {
-      return true;
-    }
-    if (
-      boardState[0][2] &&
-      boardState[0][2] === boardState[1][2] &&
-      boardState[1][2] === boardState[2][2]
-    ) {
-      return true;
-    }
-    if (
-      boardState[0][0] === 1 &&
-      boardState[1][1] === 1 &&
-      boardState[2][2] === 1
-    ) {
-      return true;
-    }
-    if (
-      boardState[0][0] &&
-      boardState[0][0] === boardState[1][1] &&
-      boardState[1][1] === boardState[2][2]
-    ) {
-      return true;
-    }
-    if (
-      boardState[0][2] &&
-      boardState[0][2] === boardState[1][1] &&
-      boardState[1][1] === boardState[2][0]
-    ) {
-      return true;
-    }
-
-    return false;
+    setBoardState(defaultState);
+    setVictory(false);
   };
-  useEffect(() => {
-    const result = checkVictory();
-    if(result){
-        setVictory(result)
+  const checkVictory = () => {
+    for (let i = 0; i < boardState.length; i++) {
+      for (let j = 0; j < boardState[i].length; j++) {
+        if (
+          //row
+          (boardState[i][j] &&
+            boardState[i][j] === boardState[i][j + 1] &&
+            boardState[i][j + 1] === boardState[i][j + 2]) ||
+          //column
+          (boardState[i + 1] !== undefined &&
+            boardState[i + 2] !== undefined &&
+            boardState[i][j] &&
+            boardState[i][j] === boardState[i + 1][j] &&
+            boardState[i + 1][j] === boardState[i + 2][j]) ||
+          // diagonal left
+          (boardState[i][j] &&
+            boardState[i + 1] !== undefined &&
+            boardState[i + 2] !== undefined &&
+            boardState[i][j] === boardState[i + 1][j + 1] &&
+            boardState[i + 1][j + 1] &&
+            boardState[i + 1][j + 1] === boardState[i + 2][j + 2]) ||
+          // diagonal right
+          (boardState[i][j] &&
+            boardState[i - 1] !== undefined &&
+            boardState[i - 2] !== undefined &&
+            boardState[i][j] === boardState[i - 1][j + 1] &&
+            boardState[i - 1][j + 1] === boardState[i - 2][j + 2])
+        ) {
+          return setVictory(true);
+        }
+      }
     }
-  },[boardState])
-  useEffect(()=> {
-if(victory){
-    Alert.alert('you win')
-}
-  },[victory])
+  };
+
+  useEffect(() => {
+    checkVictory();
+  }, [boardState]);
+  useEffect(() => {
+    if (victory) {
+      Alert.alert('you win');
+    }
+  }, [victory]);
   const handlePressItem = (row, index, item) => () => {
-    const itemIndex = index
+    const itemIndex = index;
     if (item !== 0) {
       return null;
     }
-    console.log('old state', boardState[row]);
-    const newRowState = []
+    const newRowState = [];
     boardState[row].map((item, index) => {
-        if(index === itemIndex){
-            newRowState.push(player)
-        }
-        else{
-            newRowState.push(item)
-        }
-
-    })
+      if (index === itemIndex) {
+        newRowState.push(player);
+      } else {
+        newRowState.push(item);
+      }
+    });
     if (player === 1) {
       setPlayer(2);
     } else if (player === 2) {
@@ -145,9 +114,7 @@ if(victory){
       return 'red';
     }
   };
-  console.log({boardState});
   const firstRow = boardState[0].map((item, index) => {
-    console.log({index});
     return (
       <TouchableOpacity
         style={{
@@ -218,13 +185,44 @@ if(victory){
   ));
 
   return (
-    <View style={{flex: 1, backgroundColor:victory?'white':player === 1?'#add8e6':'#f89494'}}>
-        <View style={{marginTop:'20%'}}>
-      <View style={{flexDirection: 'row',backgroundColor:'white'}}>{firstRow}</View>
-      <View style={{flexDirection: 'row', backgroundColor:'white'}}>{secondRow}</View>
-      <View style={{flexDirection: 'row', backgroundColor:'white'}}>{thirdRow}</View>
+    <View
+      style={{
+        flex: 1,
+        backgroundColor: victory
+          ? 'white'
+          : player === 1
+          ? '#add8e6'
+          : '#f89494',
+      }}>
+      <View style={{marginTop: '20%'}}>
+        <View style={{flexDirection: 'row', backgroundColor: 'white'}}>
+          {firstRow}
+        </View>
+        <View style={{flexDirection: 'row', backgroundColor: 'white'}}>
+          {secondRow}
+        </View>
+        <View style={{flexDirection: 'row', backgroundColor: 'white'}}>
+          {thirdRow}
+        </View>
       </View>
-     <TouchableOpacity onPress={handleStartNewGame} style={{position:'absolute', bottom:0, backgroundColor:'green', width:'100%'}}><Text style={{color:'white', fontSize:20, alignSelf:'center', paddingVertical:20}}>New game</Text></TouchableOpacity>
+      <TouchableOpacity
+        onPress={handleStartNewGame}
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          backgroundColor: 'green',
+          width: '100%',
+        }}>
+        <Text
+          style={{
+            color: 'white',
+            fontSize: 20,
+            alignSelf: 'center',
+            paddingVertical: 20,
+          }}>
+          New game
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
