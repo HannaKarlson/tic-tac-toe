@@ -7,7 +7,7 @@ import {
   Dimensions,
   Button,
   StyleSheet,
-  Animated
+  Animated,
 } from 'react-native';
 import Tile from '../components/Tile';
 
@@ -20,10 +20,10 @@ const defaultState = [
 
 const getTileColor = item => {
   if (item === 1) {
-    return 'blue';
+    return '#41EAD4';
   }
   if (item === 2) {
-    return 'red';
+    return '#FF206E';
   }
 };
 
@@ -33,10 +33,11 @@ const Board = () => {
   const [victory, setVictory] = useState(false);
   const animatedColor = useRef(new Animated.Value(0)).current;
 
- const backgroundColor = animatedColor.interpolate({
-    inputRange:[1,2],
-    outputRange:['#add8e6', '#f89494']
-  })
+  const backgroundColor = animatedColor.interpolate({
+    inputRange: [1, 2],
+    outputRange: ['#41EDD4', '#FF206E'],
+    //outputRange:['#add8e6', '#f89494']
+  });
   const handleStartNewGame = () => {
     setBoardState(defaultState);
     setVictory(false);
@@ -84,22 +85,21 @@ const Board = () => {
     }
   }, [victory]);
   useEffect(() => {
-    if(player === 1){
+    if (player === 1) {
       Animated.timing(animatedColor, {
         toValue: 1,
-        duration:500,
+        duration: 500,
         useNativeDriver: true,
-      }).start()
+      }).start();
     }
-    if(player === 2){
+    if (player === 2) {
       Animated.timing(animatedColor, {
         toValue: 2,
-        duration:500,
+        duration: 500,
         useNativeDriver: true,
-      }).start()
+      }).start();
     }
-  
-  },[player])
+  }, [player]);
   const handlePressItem = (row, index, item) => () => {
     const itemIndex = index;
     if (item !== 0) {
@@ -130,100 +130,55 @@ const Board = () => {
 
     setBoardState(newState);
   };
-  const firstRow = boardState[0].map((item, index) => {
+  const allRows = () => {
     return (
-      <TouchableOpacity
-        style={{
-          flex: 1,
-          borderWidth: 1,
-          height: deviceWidth / 3,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-        onPress={handlePressItem(0, index, item)}>
-        <View
-          style={{
-            backgroundColor: getTileColor(item),
-            height: deviceWidth / 3.5,
-            width: deviceWidth / 3.5,
-            borderRadius: 100,
-            overflow: 'hidden',
-          }}></View>
-      </TouchableOpacity>
+      <View>
+        {boardState.map((row, rowIndex) => {
+          return (
+            <View style={{flexDirection: 'row', backgroundColor: 'white'}}>
+              {row.map((item, index) => {
+                return (
+                  <TouchableOpacity
+                    style={{
+                      flex: 1,
+                      borderWidth: 1,
+                      height: deviceWidth / 3,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                    onPress={handlePressItem(rowIndex, index, item)}>
+                    <View
+                      style={{
+                        backgroundColor: getTileColor(item),
+                        height: deviceWidth / 3.5,
+                        width: deviceWidth / 3.5,
+                        borderRadius: 100,
+                        overflow: 'hidden',
+                      }}></View>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          );
+        })}
+      </View>
     );
-  });
-  const secondRow = boardState[1].map((item, index) => (
-    <TouchableOpacity
-      style={{
-        flex: 1,
-        borderWidth: 1,
-        height: deviceWidth / 3,
-        alignItems: 'center',
-        justifyContent: 'center',
-
-        overflow: 'hidden',
-      }}
-      onPress={handlePressItem(1, index, item)}>
-      <View
-        style={{
-          backgroundColor: getTileColor(item),
-          height: deviceWidth / 3.5,
-          width: deviceWidth / 3.5,
-          borderRadius: 100,
-          overflow: 'hidden',
-        }}></View>
-    </TouchableOpacity>
-  ));
-  const thirdRow = boardState[2].map((item, index) => (
-    <TouchableOpacity
-      style={{
-        flex: 1,
-        borderWidth: 1,
-        height: deviceWidth / 3,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-      onPress={handlePressItem(2, index, item)}>
-      <View
-        style={{
-          backgroundColor: getTileColor(item),
-          height: deviceWidth / 3.5,
-          width: deviceWidth / 3.5,
-          borderRadius: 100,
-          overflow: 'hidden',
-        }}></View>
-    </TouchableOpacity>
-  ));
-  const rows = boardState.map(row => (
-    <View style={{borderWidth: 1, height: 50, flexDirection: 'row'}}>
-      {firstRow}
-    </View>
-  ));
+  };
 
   return (
-    <Animated.View style={{flex:1, backgroundColor:backgroundColor}}>
-      <View style={{marginTop: '20%'}}>
-        <View style={{flexDirection: 'row', backgroundColor: 'white'}}>
-          {firstRow}
-        </View>
-        <View style={{flexDirection: 'row', backgroundColor: 'white'}}>
-          {secondRow}
-        </View>
-        <View style={{flexDirection: 'row', backgroundColor: 'white'}}>
-          {thirdRow}
-        </View>
-      </View>
+    <Animated.View style={{flex: 1, backgroundColor: backgroundColor}}>
+      <View style={{marginTop: '20%', flex: 1}}>{allRows()}</View>
       <TouchableOpacity
         onPress={handleStartNewGame}
         style={{
           position: 'absolute',
           bottom: 0,
-          backgroundColor: 'green',
+          backgroundColor: '#FBFF12',
           width: '100%',
         }}>
         <Text
           style={{
-            color: 'white',
+            color: '#0C0F0A',
             fontSize: 20,
             alignSelf: 'center',
             paddingVertical: 20,
@@ -231,7 +186,7 @@ const Board = () => {
           New game
         </Text>
       </TouchableOpacity>
-      </Animated.View>
+    </Animated.View>
   );
 };
 
