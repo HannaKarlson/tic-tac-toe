@@ -1,0 +1,1 @@
+export const getTable = (arrayLength)  => new Array(arrayLength).fill(new Array(arrayLength).fill(0))

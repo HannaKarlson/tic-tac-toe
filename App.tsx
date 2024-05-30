@@ -25,6 +25,12 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 import Board from './src/components/Board';
+import SelectGame from './src/components/SelectGame';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { colors } from './src/theme/colors';
+
+const Stack = createNativeStackNavigator();
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -60,17 +66,31 @@ function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    backgroundColor: Colors.darker//isDarkMode ? Colors.darker : Colors.lighter,
   };
 
   return (
-    <SafeAreaView style={{flex:1}}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+     <SafeAreaView style={{flex:1}}>
+      {/* <StatusBar
+        barStyle={'dark-content'}//{isDarkMode ? 'light-content' : 'dark-content'}
         backgroundColor={backgroundStyle.backgroundColor}
-      />
-   <Board/>
-    </SafeAreaView>
+      /> */}
+   <NavigationContainer>
+    <Stack.Navigator
+     screenOptions={{
+      headerStyle: {
+        backgroundColor: colors.lemonYellow,
+      },
+      headerTintColor: colors.midnightDark,
+      headerTitleStyle: {
+        fontWeight: 'bold',
+      },
+    }}>
+      <Stack.Screen name='SelectGame' component={SelectGame} options={{ title: 'Select board' }}/>
+      <Stack.Screen name='Board' component={Board} options={{ title: null }}/>
+    </Stack.Navigator>
+   </NavigationContainer>
+     </SafeAreaView>
   );
 }
 

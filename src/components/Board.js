@@ -9,76 +9,39 @@ import {
   StyleSheet,
   Animated,
 } from 'react-native';
-import Tile from '../components/Tile';
+import {checkVictory} from '../utils.js/checkVictory';
+import {getTable} from '../utils.js/getTable';
+import {colors} from '../theme/colors';
 
 const deviceWidth = Dimensions.get('window').width;
-const defaultState = [
-  [0, 0, 0],
-  [0, 0, 0],
-  [0, 0, 0],
-];
 
-const getTileColor = item => {
+export const getTileColor = item => {
   if (item === 1) {
-    return '#41EAD4';
+    return colors.lightTurchese;
   }
   if (item === 2) {
-    return '#FF206E';
+    return colors.cerisePink;
   }
 };
 
-const Board = () => {
+const Board = ({route}) => {
+  const arrayLength = route.params?.arrayLength || 3;
+  const arr = new Array(arrayLength).fill(0);
+  const defaultState = getTable(arrayLength);
   const [boardState, setBoardState] = useState(defaultState);
   const [player, setPlayer] = useState(1);
   const [victory, setVictory] = useState(false);
-  const animatedColor = useRef(new Animated.Value(0)).current;
+  const animatedColor = useRef(new Animated.Value(1)).current;
 
   const backgroundColor = animatedColor.interpolate({
     inputRange: [1, 2],
-    outputRange: ['#41EDD4', '#FF206E'],
-    //outputRange:['#add8e6', '#f89494']
+    outputRange: [colors.lightTurchese, colors.cerisePink],
   });
   const handleStartNewGame = () => {
     setBoardState(defaultState);
     setVictory(false);
   };
-  const checkVictory = () => {
-    for (let i = 0; i < boardState.length; i++) {
-      for (let j = 0; j < boardState[i].length; j++) {
-        if (
-          //row
-          (boardState[i][j] &&
-            boardState[i][j] === boardState[i][j + 1] &&
-            boardState[i][j + 1] === boardState[i][j + 2]) ||
-          //column
-          (boardState[i + 1] !== undefined &&
-            boardState[i + 2] !== undefined &&
-            boardState[i][j] &&
-            boardState[i][j] === boardState[i + 1][j] &&
-            boardState[i + 1][j] === boardState[i + 2][j]) ||
-          // diagonal left
-          (boardState[i][j] &&
-            boardState[i + 1] !== undefined &&
-            boardState[i + 2] !== undefined &&
-            boardState[i][j] === boardState[i + 1][j + 1] &&
-            boardState[i + 1][j + 1] &&
-            boardState[i + 1][j + 1] === boardState[i + 2][j + 2]) ||
-          // diagonal right
-          (boardState[i][j] &&
-            boardState[i - 1] !== undefined &&
-            boardState[i - 2] !== undefined &&
-            boardState[i][j] === boardState[i - 1][j + 1] &&
-            boardState[i - 1][j + 1] === boardState[i - 2][j + 2])
-        ) {
-          return setVictory(true);
-        }
-      }
-    }
-  };
 
-  useEffect(() => {
-    checkVictory();
-  }, [boardState]);
   useEffect(() => {
     if (victory) {
       Alert.alert('you win');
@@ -113,12 +76,6 @@ const Board = () => {
         newRowState.push(item);
       }
     });
-    if (player === 1) {
-      setPlayer(2);
-    } else if (player === 2) {
-      setPlayer(1);
-    }
-
     const newState = [];
     boardState.map((item, index) => {
       if (index === row) {
@@ -129,20 +86,38 @@ const Board = () => {
     });
 
     setBoardState(newState);
+    const victory = checkVictory(newState);
+    if (victory) {
+      return setVictory(victory);
+    }
+    if (player === 1) {
+      setPlayer(2);
+    } else if (player === 2) {
+      setPlayer(1);
+    }
   };
   const allRows = () => {
     return (
       <View>
         {boardState.map((row, rowIndex) => {
           return (
-            <View style={{flexDirection: 'row', backgroundColor: 'white'}}>
+            <View
+              key={rowIndex.toString()}
+              style={{
+                flexDirection: 'row',
+                backgroundColor: colors.simpleWhite,
+              }}>
               {row.map((item, index) => {
+                const itemKey = `${rowIndex.toString()}-${index.toString()}`;
                 return (
                   <TouchableOpacity
+                    disabled={victory}
+                    key={itemKey}
                     style={{
                       flex: 1,
                       borderWidth: 1,
-                      height: deviceWidth / 3,
+                      borderColor: colors.midnightDark,
+                      height: deviceWidth / arrayLength,
                       alignItems: 'center',
                       justifyContent: 'center',
                     }}
@@ -150,8 +125,8 @@ const Board = () => {
                     <View
                       style={{
                         backgroundColor: getTileColor(item),
-                        height: deviceWidth / 3.5,
-                        width: deviceWidth / 3.5,
+                        height: deviceWidth / (arrayLength * 1.2),
+                        width: deviceWidth / (arrayLength * 1.2),
                         borderRadius: 100,
                         overflow: 'hidden',
                       }}></View>
@@ -173,12 +148,12 @@ const Board = () => {
         style={{
           position: 'absolute',
           bottom: 0,
-          backgroundColor: '#FBFF12',
+          backgroundColor: colors.lemonYellow,
           width: '100%',
         }}>
         <Text
           style={{
-            color: '#0C0F0A',
+            color: colors.midnightDark,
             fontSize: 20,
             alignSelf: 'center',
             paddingVertical: 20,
