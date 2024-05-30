@@ -24,6 +24,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import Game from './src/components/Game';
 import Board from './src/components/Board';
 import SelectGame from './src/components/SelectGame';
 import { NavigationContainer } from '@react-navigation/native';
@@ -87,7 +88,7 @@ function App(): React.JSX.Element {
       },
     }}>
       <Stack.Screen name='SelectGame' component={SelectGame} options={{ title: 'Select board' }}/>
-      <Stack.Screen name='Board' component={Board} options={{ title: null }}/>
+      <Stack.Screen name='Board' component={Game} options={{ title: null }}/>
     </Stack.Navigator>
    </NavigationContainer>
      </SafeAreaView>
