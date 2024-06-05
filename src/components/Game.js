@@ -9,19 +9,12 @@ import {
   StyleSheet,
   Animated,
 } from 'react-native';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faUser } from '@fortawesome/free-solid-svg-icons/faUser'
 import {checkVictory} from '../utils/checkVictory';
 import {getCleanTable} from '../utils/utils';
 import {colors} from '../theme/colors';
 import Board from './Board';
-
-// export const getTileColor = item => {
-//   if (item === 1) {
-//     return colors.lightTurchese;
-//   }
-//   if (item === 2) {
-//     return colors.cerisePink;
-//   }
-// };
 
 const Game = ({route}) => {
   const arrayLength = route.params?.arrayLength || 3;
@@ -30,6 +23,7 @@ const Game = ({route}) => {
   const [boardState, setBoardState] = useState(defaultState);
   const [player, setPlayer] = useState(1);
   const [victory, setVictory] = useState(false);
+  const [victoryCount, setVictoryCount] = useState({player1: 0, player2: 0});
   const animatedColor = useRef(new Animated.Value(1)).current;
 
   const backgroundColor = animatedColor.interpolate({
@@ -90,7 +84,21 @@ const Game = ({route}) => {
       setBoardState(newState);
       const victory = checkVictory(newState);
       if (victory) {
-        return setVictory(victory);
+        const addVictory1 = player === 1 ? 1 : 0;
+        const addVictory2 = player === 2 ? 1 : 0;
+        setVictory(victory);
+        if (player === 1) {
+          setVictoryCount({
+            player1: victoryCount.player1 + 1,
+            player2: victoryCount.player2,
+          });
+        } else {
+          setVictoryCount({
+            player1: victoryCount.player1,
+            player2: victoryCount.player2 + 1,
+          });
+        }
+        return;
       }
       if (player === 1) {
         setPlayer(2);
@@ -107,7 +115,24 @@ const Game = ({route}) => {
           onPressTile={handlePressTile}
           pressTileDisabled={victory}
         />
+        <View
+          style={{
+        padding:5,
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-around',
+            backgroundColor:colors.lemonYellow,
+            backgroundColor:colors.midnightDark
+          }}>
+            <FontAwesomeIcon size={24} icon={faUser} color={colors.lightTurchese}/>
+          <Text style={{fontSize: 24, color:colors.lightTurchese}}>{victoryCount.player1.toString()}</Text>
+ 
+         
+          <Text style={{fontSize: 24, color:colors.cerisePink}}>{victoryCount.player2.toString()}</Text>
+          <FontAwesomeIcon size={24} icon={faUser} color={colors.cerisePink}/>
+        </View>
       </View>
+
       <TouchableOpacity
         onPress={handleStartNewGame}
         style={{
@@ -122,6 +147,7 @@ const Game = ({route}) => {
             fontSize: 20,
             alignSelf: 'center',
             paddingVertical: 20,
+            fontWeight: 'bold',
           }}>
           New game
         </Text>

@@ -10,7 +10,6 @@ const easyGame = getShowTable(3)
 const mediumGame = getShowTable(6)
 const difficultGame = getShowTable(9)
 const showTable = getShowTable(3)
-console.log(showTable)
 
 const allRows = (game, navigation) => {
   if(!game){
