@@ -3,12 +3,6 @@ import {colors} from '../theme/colors';
 export const getCleanTable = arrayLength =>
   new Array(arrayLength).fill(new Array(arrayLength).fill(0));
 
-const randomIntArrayInRange = (min, max, n = 1) =>
-  Array.from(
-    {length: n},
-    () => Math.floor(Math.random() * (max - min + 1)) + min,
-  );
-
 export const getShowTable = arrayLength => {
   if (arrayLength === 3) {
     return [

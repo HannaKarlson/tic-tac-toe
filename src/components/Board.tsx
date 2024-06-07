@@ -1,15 +1,15 @@
-import React from 'react'
-import {View, TouchableOpacity, Dimensions} from 'react-native'
-import { getTileColor } from '../utils/utils';
-import { colors } from '../theme/colors';
+import React from 'react';
+import {View, TouchableOpacity, Dimensions} from 'react-native';
+import {getTileColor} from '../utils/utils';
+import {colors} from '../theme/colors';
 
 const deviceWidth = Dimensions.get('window').width;
 
 const Board = ({boardState, onPressTile, pressTileDisabled}) => {
-  if(!boardState){
-    return null
+  if (!boardState) {
+    return null;
   }
-  const arrayLength=boardState.length
+  const arrayLength = boardState.length;
   return (
     <View>
       {boardState.map((row, rowIndex) => {
@@ -53,4 +53,4 @@ const Board = ({boardState, onPressTile, pressTileDisabled}) => {
   );
 };
 
-export default Board
+export default Board;

@@ -8,21 +8,33 @@ import {
   Button,
   StyleSheet,
   Animated,
+  Modal,
+  KeyboardAvoidingViewComponent,
+  SafeAreaView,
+  Platform,
 } from 'react-native';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
-import { faUser } from '@fortawesome/free-solid-svg-icons/faUser'
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faUser} from '@fortawesome/free-solid-svg-icons/faUser';
+import LottieView from 'lottie-react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {checkVictory} from '../utils/checkVictory';
 import {getCleanTable} from '../utils/utils';
 import {colors} from '../theme/colors';
 import Board from './Board';
+import WinnerModal from './WinnerModal';
+import winner from '../../assets/winner.json';
+import thisOne from '../../assets/thisOne.json';
+import celebration from '../../assets/celebration.json';
 
 const Game = ({route}) => {
+  const insets = useSafeAreaInsets();
   const arrayLength = route.params?.arrayLength || 3;
   const arr = new Array(arrayLength).fill(0);
   const defaultState = getCleanTable(arrayLength);
   const [boardState, setBoardState] = useState(defaultState);
   const [player, setPlayer] = useState(1);
   const [victory, setVictory] = useState(false);
+  const [currentWinner, setCurrentWinner] = useState(0);
   const [victoryCount, setVictoryCount] = useState({player1: 0, player2: 0});
   const animatedColor = useRef(new Animated.Value(1)).current;
 
@@ -33,11 +45,12 @@ const Game = ({route}) => {
   const handleStartNewGame = () => {
     setBoardState(defaultState);
     setVictory(false);
+    setCurrentWinner(0);
   };
 
   useEffect(() => {
     if (victory) {
-      Alert.alert('you win');
+      setCurrentWinner(player);
     }
   }, [victory]);
   useEffect(() => {
@@ -109,7 +122,8 @@ const Game = ({route}) => {
 
   return (
     <Animated.View style={{flex: 1, backgroundColor: backgroundColor}}>
-      <View style={{marginTop: '20%', flex: 1}}>
+      <WinnerModal winner={currentWinner} />
+      <View style={{justifyContent:'center', flex: 1}}>
         <Board
           boardState={boardState}
           onPressTile={handlePressTile}
@@ -117,19 +131,76 @@ const Game = ({route}) => {
         />
         <View
           style={{
-        padding:5,
             flexDirection: 'row',
+            backgroundColor: colors.midnightDark,
             alignItems: 'center',
             justifyContent: 'space-around',
-            backgroundColor:colors.lemonYellow,
-            backgroundColor:colors.midnightDark
           }}>
-            <FontAwesomeIcon size={24} icon={faUser} color={colors.lightTurchese}/>
-          <Text style={{fontSize: 24, color:colors.lightTurchese}}>{victoryCount.player1.toString()}</Text>
- 
-         
-          <Text style={{fontSize: 24, color:colors.cerisePink}}>{victoryCount.player2.toString()}</Text>
-          <FontAwesomeIcon size={24} icon={faUser} color={colors.cerisePink}/>
+          <View>
+            {currentWinner === 1 ? (
+              <LottieView
+                style={{
+                  height: 100,
+                  width: 100,
+                  backgroundColor: colors.midnightDark,
+                }}
+                source={require('../../assets/celebration.json')}
+                autoPlay
+                loop
+              />
+            ) : (
+              <View
+                style={{
+                  height: 100,
+                  width: 100,
+                  backgroundColor: colors.midnightDark,
+                }}
+              />
+            )}
+            <View style={{position: 'absolute', top: 38, left: 38}}>
+              <FontAwesomeIcon
+                size={24}
+                icon={faUser}
+                color={colors.lightTurchese}
+              />
+            </View>
+          </View>
+          <Text style={{fontSize: 24, color: colors.lightTurchese}}>
+            {victoryCount.player1.toString()}
+          </Text>
+
+          <Text style={{fontSize: 24, color: colors.cerisePink}}>
+            {victoryCount.player2.toString()}
+          </Text>
+          <View>
+            {currentWinner === 2 ? (
+              <LottieView
+                style={{
+                  height: 100,
+                  width: 100,
+                  backgroundColor: colors.midnightDark,
+                }}
+                source={require('../../assets/celebration.json')}
+                autoPlay
+                loop
+              />
+            ) : (
+              <View
+                style={{
+                  height: 100,
+                  width: 100,
+                  backgroundColor: colors.midnightDark,
+                }}
+              />
+            )}
+            <View style={{position: 'absolute', top: 38, left: 38}}>
+              <FontAwesomeIcon
+                size={24}
+                icon={faUser}
+                color={colors.cerisePink}
+              />
+            </View>
+          </View>
         </View>
       </View>
 
@@ -147,6 +218,7 @@ const Game = ({route}) => {
             fontSize: 20,
             alignSelf: 'center',
             paddingVertical: 20,
+            paddingBottom: insets.bottom ? insets.bottom : 20,
             fontWeight: 'bold',
           }}>
           New game
