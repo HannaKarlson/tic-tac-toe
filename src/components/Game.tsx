@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useRef} from 'react';
+import type {FC} from 'react'
 import {
   View,
   Text,
@@ -25,8 +26,14 @@ import WinnerModal from './WinnerModal';
 import winner from '../../assets/winner.json';
 import thisOne from '../../assets/thisOne.json';
 import celebration from '../../assets/celebration.json';
+// types
+import type { RootStackParamList } from '../types/navigationTypes';
+import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
-const Game = ({route}) => {
+type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
+type HandlePressTile =  ({rowIndex, index, item}:{rowIndex:number, index:number, item:number}) => void
+
+const Game:FC<Props> = ({route}) => {
   const insets = useSafeAreaInsets();
   const arrayLength = route.params?.arrayLength || 3;
   const arr = new Array(arrayLength).fill(0);
@@ -70,14 +77,14 @@ const Game = ({route}) => {
     }
   }, [player]);
 
-  const handlePressTile =
+  const handlePressTile:HandlePressTile =
     ({rowIndex, index, item}) =>
     () => {
       const itemIndex = index;
       if (item !== 0) {
         return null;
       }
-      const newRowState = [];
+      const newRowState:Array<number> = [];
       boardState[rowIndex].map((item, index) => {
         if (index === itemIndex) {
           newRowState.push(player);
@@ -85,7 +92,7 @@ const Game = ({route}) => {
           newRowState.push(item);
         }
       });
-      const newState = [];
+      const newState:Array<Array<number>> = [];
       boardState.map((item, index) => {
         if (index === rowIndex) {
           newState.push(newRowState);
@@ -95,7 +102,7 @@ const Game = ({route}) => {
       });
 
       setBoardState(newState);
-      const victory = checkVictory(newState);
+      const victory:boolean|undefined = checkVictory(newState);
       if (victory) {
         const addVictory1 = player === 1 ? 1 : 0;
         const addVictory2 = player === 2 ? 1 : 0;

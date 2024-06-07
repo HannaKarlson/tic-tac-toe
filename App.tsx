@@ -24,8 +24,9 @@ import SelectGame from './src/components/SelectGame';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { colors } from './src/theme/colors';
+import type { RootStackParamList } from './src/types/navigationTypes';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -53,7 +54,7 @@ function App(): React.JSX.Element {
       },
     }}>
       <Stack.Screen name='SelectGame' component={SelectGame} options={{ title: 'Select board' }}/>
-      <Stack.Screen name='Board' component={Game} options={{ title: '' }}/>
+      <Stack.Screen name='Game' component={Game} options={{ title: '' }}/>
     </Stack.Navigator>
    </NavigationContainer>
   );

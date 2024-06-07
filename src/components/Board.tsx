@@ -1,11 +1,19 @@
 import React from 'react';
+import type {FC} from 'react'
 import {View, TouchableOpacity, Dimensions} from 'react-native';
 import {getTileColor} from '../utils/utils';
 import {colors} from '../theme/colors';
 
+
 const deviceWidth = Dimensions.get('window').width;
 
-const Board = ({boardState, onPressTile, pressTileDisabled}) => {
+type Props = {
+  boardState:Array<Array<number>>,
+  onPressTile:Function,
+  pressTileDisabled:boolean
+}
+
+const Board:FC<Props> = ({boardState, onPressTile, pressTileDisabled}) => {
   if (!boardState) {
     return null;
   }

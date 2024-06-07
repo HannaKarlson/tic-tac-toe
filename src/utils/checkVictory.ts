@@ -1,4 +1,6 @@
-export const checkVictory = boardState => {
+type CheckVictory = (boardState: Array<Array<number>>) => boolean | undefined;
+
+export const checkVictory: CheckVictory = boardState => {
   for (let i = 0; i < boardState.length; i++) {
     for (let j = 0; j < boardState[i].length; j++) {
       if (boardState.length === 3) {

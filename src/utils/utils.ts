@@ -1,9 +1,13 @@
 import {colors} from '../theme/colors';
 
-export const getCleanTable = arrayLength =>
+type GetShowTable = (arrayLength: number) => Array<Array<number>>|null;
+type GetCleanTable = (arrayLength:number) => Array<Array<number>>
+type GetTileColor = (item:number) => string
+
+export const getCleanTable:GetCleanTable = arrayLength =>
   new Array(arrayLength).fill(new Array(arrayLength).fill(0));
 
-export const getShowTable = arrayLength => {
+export const getShowTable:GetShowTable = arrayLength => {
   if (arrayLength === 3) {
     return [
       [0, 2, 2],
@@ -37,11 +41,12 @@ export const getShowTable = arrayLength => {
   return null;
 };
 
-export const getTileColor = item => {
+export const getTileColor:GetTileColor = item => {
   if (item === 1) {
     return colors.lightTurchese;
   }
   if (item === 2) {
     return colors.cerisePink;
   }
+  return colors.simpleWhite
 };
