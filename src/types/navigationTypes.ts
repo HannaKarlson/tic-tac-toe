@@ -1,11 +1,9 @@
-import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
 export type RootStackParamList = {
-    SelectGame: undefined;
-    Game: {arrayLength:number};
-  };
-
-
+  SelectGame: undefined;
+  Game: {arrayLength: number};
+};
 
 export type SelectGameScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,

@@ -1,5 +1,5 @@
-import React, {useState, useEffect, useRef} from 'react';
-import type {FC} from 'react'
+import React, {useState, useEffect, useRef, useContext} from 'react';
+import type {FC} from 'react';
 import {
   View,
   Text,
@@ -23,17 +23,27 @@ import {getCleanTable} from '../utils/utils';
 import {colors} from '../theme/colors';
 import Board from './Board';
 import WinnerModal from './WinnerModal';
+import {ThemeContext} from '../../App';
 import winner from '../../assets/winner.json';
 import thisOne from '../../assets/thisOne.json';
 import celebration from '../../assets/celebration.json';
 // types
-import type { RootStackParamList } from '../types/navigationTypes';
-import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type {RootStackParamList} from '../types/navigationTypes';
+import type {NativeStackScreenProps} from '@react-navigation/native-stack';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Game'>;
-type HandlePressTile =  ({rowIndex, index, item}:{rowIndex:number, index:number, item:number}) => void
+type HandlePressTile = ({
+  rowIndex,
+  index,
+  item,
+}: {
+  rowIndex: number;
+  index: number;
+  item: number;
+}) => void;
 
-const Game:FC<Props> = ({route}) => {
+const Game: FC<Props> = ({route}) => {
+  const theme = useContext(ThemeContext);
   const insets = useSafeAreaInsets();
   const arrayLength = route.params?.arrayLength || 3;
   const arr = new Array(arrayLength).fill(0);
@@ -77,14 +87,14 @@ const Game:FC<Props> = ({route}) => {
     }
   }, [player]);
 
-  const handlePressTile:HandlePressTile =
+  const handlePressTile: HandlePressTile =
     ({rowIndex, index, item}) =>
     () => {
       const itemIndex = index;
       if (item !== 0) {
         return null;
       }
-      const newRowState:Array<number> = [];
+      const newRowState: Array<number> = [];
       boardState[rowIndex].map((item, index) => {
         if (index === itemIndex) {
           newRowState.push(player);
@@ -92,7 +102,7 @@ const Game:FC<Props> = ({route}) => {
           newRowState.push(item);
         }
       });
-      const newState:Array<Array<number>> = [];
+      const newState: Array<Array<number>> = [];
       boardState.map((item, index) => {
         if (index === rowIndex) {
           newState.push(newRowState);
@@ -102,7 +112,7 @@ const Game:FC<Props> = ({route}) => {
       });
 
       setBoardState(newState);
-      const victory:boolean|undefined = checkVictory(newState);
+      const victory: boolean | undefined = checkVictory(newState);
       if (victory) {
         const addVictory1 = player === 1 ? 1 : 0;
         const addVictory2 = player === 2 ? 1 : 0;
@@ -130,7 +140,7 @@ const Game:FC<Props> = ({route}) => {
   return (
     <Animated.View style={{flex: 1, backgroundColor: backgroundColor}}>
       <WinnerModal winner={currentWinner} />
-      <View style={{justifyContent:'center', flex: 1}}>
+      <View style={{justifyContent: 'center', flex: 1}}>
         <Board
           boardState={boardState}
           onPressTile={handlePressTile}
@@ -139,9 +149,13 @@ const Game:FC<Props> = ({route}) => {
         <View
           style={{
             flexDirection: 'row',
-            backgroundColor: colors.midnightDark,
+            backgroundColor:
+              theme === 'dark' ? colors.midnightDark : colors.simpleWhite,
             alignItems: 'center',
             justifyContent: 'space-around',
+            borderWidth: 1,
+            borderColor:
+              theme === 'dark' ? colors.simpleWhite : colors.midnightDark,
           }}>
           <View>
             {currentWinner === 1 ? (
@@ -149,7 +163,6 @@ const Game:FC<Props> = ({route}) => {
                 style={{
                   height: 100,
                   width: 100,
-                  backgroundColor: colors.midnightDark,
                 }}
                 source={require('../../assets/celebration.json')}
                 autoPlay
@@ -160,7 +173,6 @@ const Game:FC<Props> = ({route}) => {
                 style={{
                   height: 100,
                   width: 100,
-                  backgroundColor: colors.midnightDark,
                 }}
               />
             )}
@@ -172,11 +184,21 @@ const Game:FC<Props> = ({route}) => {
               />
             </View>
           </View>
-          <Text style={{fontSize: 24, color: colors.lightTurchese}}>
+          <Text
+            style={{
+              fontSize: 24,
+              color: colors.lightTurchese,
+              fontWeight: 'bold',
+            }}>
             {victoryCount.player1.toString()}
           </Text>
 
-          <Text style={{fontSize: 24, color: colors.cerisePink}}>
+          <Text
+            style={{
+              fontSize: 24,
+              color: colors.cerisePink,
+              fontWeight: 'bold',
+            }}>
             {victoryCount.player2.toString()}
           </Text>
           <View>
@@ -185,7 +207,6 @@ const Game:FC<Props> = ({route}) => {
                 style={{
                   height: 100,
                   width: 100,
-                  backgroundColor: colors.midnightDark,
                 }}
                 source={require('../../assets/celebration.json')}
                 autoPlay
@@ -196,7 +217,6 @@ const Game:FC<Props> = ({route}) => {
                 style={{
                   height: 100,
                   width: 100,
-                  backgroundColor: colors.midnightDark,
                 }}
               />
             )}

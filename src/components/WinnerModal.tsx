@@ -1,20 +1,21 @@
 import React, {useState, useEffect} from 'react';
-import type { FC } from 'react';
-import {Modal, SafeAreaView, Platform, StyleSheet} from 'react-native';
+import type {FC} from 'react';
+import {Modal, Platform, StyleSheet} from 'react-native';
 import LottieView from 'lottie-react-native';
 import celebration from '../../assets/celebration.json';
 
-type Props ={
-    winner:number
-}
+type Props = {
+  winner: number;
+};
 
 const styles = StyleSheet.create({
-lottieView:{
-    flex: 1, marginBottom: Platform.OS === 'android' ? 45 : 0 
-}
-})
+  lottieView: {
+    flex: 1,
+    marginBottom: Platform.OS === 'android' ? 45 : 0,
+  },
+});
 
-const WinnerModal:FC<Props> = ({winner}) => {
+const WinnerModal: FC<Props> = ({winner}) => {
   const [modalVisible, setModalVisible] = useState(false);
 
   useEffect(() => {
