@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import type {FC} from 'react';
-import {Modal, Platform, StyleSheet} from 'react-native';
+import {Modal, Platform, Pressable, StyleSheet} from 'react-native';
 import LottieView from 'lottie-react-native';
 import celebration from '../../assets/celebration.json';
 
@@ -12,6 +12,9 @@ const styles = StyleSheet.create({
   lottieView: {
     flex: 1,
     marginBottom: Platform.OS === 'android' ? 45 : 0,
+  },
+  pressable: {
+    flex: 1,
   },
 });
 
@@ -31,12 +34,16 @@ const WinnerModal: FC<Props> = ({winner}) => {
 
   return (
     <Modal visible={modalVisible} transparent={true}>
-      <LottieView
-        style={styles.lottieView}
-        source={celebration}
-        autoPlay
-        loop
-      />
+      <Pressable
+        onPress={() => setModalVisible(false)}
+        style={styles.pressable}>
+        <LottieView
+          style={styles.lottieView}
+          source={celebration}
+          autoPlay
+          loop
+        />
+      </Pressable>
     </Modal>
   );
 };

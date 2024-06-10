@@ -15,7 +15,11 @@ type Props = {
 };
 
 const styles = StyleSheet.create({
-  board: {flexDirection: 'row'},
+  board: {
+    borderWidth: 3,
+    borderColor: colors.midnightDark,
+  },
+  row: {flexDirection: 'row'},
   boardSquare: {
     flex: 1,
     borderWidth: 1,
@@ -41,13 +45,13 @@ const SelectGameBoard: FC<Props> = ({board, navigation}) => {
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate('Game', {arrayLength: board.length})}
-      style={{width: width}}>
+      style={[styles.board, {width: width}]}>
       {board.map((row, rowIndex) => {
         return (
           <View
             key={rowIndex.toString()}
             style={[
-              styles.board,
+              styles.row,
               {
                 backgroundColor: backgroundColor,
 

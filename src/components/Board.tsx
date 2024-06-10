@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import type {FC} from 'react';
-import {View, TouchableOpacity, Dimensions, StyleSheet} from 'react-native';
+import {View, Pressable, Dimensions, StyleSheet} from 'react-native';
 import {getTileColor} from '../utils/utils';
 import {colors} from '../theme/colors';
 import {ThemeContext} from '../../App';
@@ -16,6 +16,9 @@ type Props = {
 
 const styles = StyleSheet.create({
   board: {
+    borderWidth: 3,
+  },
+  row: {
     flexDirection: 'row',
   },
   boardSquare: {
@@ -41,13 +44,13 @@ const Board: FC<Props> = ({boardState, onPressTile, pressTileDisabled}) => {
   }
   const arrayLength = boardState.length;
   return (
-    <View>
+    <View style={[styles.board, {borderColor: borderColor}]}>
       {boardState.map((row, rowIndex) => {
         return (
           <View
             key={rowIndex.toString()}
             style={[
-              styles.board,
+              styles.row,
               {
                 backgroundColor: backgroundColor,
               },
@@ -55,7 +58,7 @@ const Board: FC<Props> = ({boardState, onPressTile, pressTileDisabled}) => {
             {row.map((item, index) => {
               const itemKey = `${rowIndex.toString()}-${index.toString()}`;
               return (
-                <TouchableOpacity
+                <Pressable
                   disabled={pressTileDisabled}
                   key={itemKey}
                   style={[
@@ -76,7 +79,7 @@ const Board: FC<Props> = ({boardState, onPressTile, pressTileDisabled}) => {
                       },
                     ]}
                   />
-                </TouchableOpacity>
+                </Pressable>
               );
             })}
           </View>

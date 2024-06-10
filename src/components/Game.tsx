@@ -1,6 +1,6 @@
 import React, {useState, useEffect, useRef, useContext} from 'react';
 import type {FC} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
+import {View, Text, StyleSheet, Animated, Pressable} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faUser} from '@fortawesome/free-solid-svg-icons/faUser';
 import LottieView from 'lottie-react-native';
@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
   resultView: {
     alignItems: 'center',
     justifyContent: 'space-around',
-    borderWidth: 1,
     flexDirection: 'row',
   },
   lottieView: {
@@ -173,9 +172,6 @@ const Game: FC<Props> = ({route}) => {
             {
               backgroundColor:
                 theme === 'dark' ? colors.midnightDark : colors.simpleWhite,
-
-              borderColor:
-                theme === 'dark' ? colors.simpleWhite : colors.midnightDark,
             },
           ]}>
           <View>
@@ -238,7 +234,7 @@ const Game: FC<Props> = ({route}) => {
         </View>
       </View>
 
-      <TouchableOpacity onPress={handleStartNewGame} style={styles.button}>
+      <Pressable onPress={handleStartNewGame} style={styles.button}>
         <Text
           style={[
             styles.buttonText,
@@ -250,7 +246,7 @@ const Game: FC<Props> = ({route}) => {
           ]}>
           New game
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </Animated.View>
   );
 };
