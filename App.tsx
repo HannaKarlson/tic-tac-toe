@@ -1,24 +1,7 @@
-import React, {useContext, createContext} from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import React, {createContext} from 'react';
+import {useColorScheme} from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
 import Game from './src/components/Game';
-import Board from './src/components/Board';
 import SelectGame from './src/components/SelectGame';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
@@ -28,14 +11,9 @@ import type {ColorScheme} from './src/types/types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
 export const ThemeContext = createContext<ColorScheme>('light');
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
   const colorScheme: ColorScheme = useColorScheme() || 'light';
 
   return (

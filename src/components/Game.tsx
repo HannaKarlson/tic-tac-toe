@@ -1,19 +1,6 @@
 import React, {useState, useEffect, useRef, useContext} from 'react';
 import type {FC} from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  Alert,
-  Dimensions,
-  Button,
-  StyleSheet,
-  Animated,
-  Modal,
-  KeyboardAvoidingViewComponent,
-  SafeAreaView,
-  Platform,
-} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Animated} from 'react-native';
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faUser} from '@fortawesome/free-solid-svg-icons/faUser';
 import LottieView from 'lottie-react-native';
@@ -24,9 +11,6 @@ import {colors} from '../theme/colors';
 import Board from './Board';
 import WinnerModal from './WinnerModal';
 import {ThemeContext} from '../../App';
-import winner from '../../assets/winner.json';
-import thisOne from '../../assets/thisOne.json';
-import celebration from '../../assets/celebration.json';
 // types
 import type {RootStackParamList} from '../types/navigationTypes';
 import type {NativeStackScreenProps} from '@react-navigation/native-stack';
@@ -42,11 +26,50 @@ type HandlePressTile = ({
   item: number;
 }) => void;
 
+const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
+  view: {justifyContent: 'center', flex: 1},
+  resultView: {
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    borderWidth: 1,
+    flexDirection: 'row',
+  },
+  lottieView: {
+    height: 100,
+    width: 100,
+  },
+  iconView: {
+    position: 'absolute',
+    top: 38,
+    left: 38,
+  },
+  text: {
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  button: {
+    position: 'absolute',
+    bottom: 0,
+    backgroundColor: colors.lemonYellow,
+    width: '100%',
+  },
+  buttonText: {
+    color: colors.midnightDark,
+    fontSize: 20,
+    alignSelf: 'center',
+    paddingVertical: 20,
+    fontWeight: 'bold',
+    paddingBottom: 20,
+  },
+});
+
 const Game: FC<Props> = ({route}) => {
   const theme = useContext(ThemeContext);
   const insets = useSafeAreaInsets();
   const arrayLength = route.params?.arrayLength || 3;
-  const arr = new Array(arrayLength).fill(0);
   const defaultState = getCleanTable(arrayLength);
   const [boardState, setBoardState] = useState(defaultState);
   const [player, setPlayer] = useState(1);
@@ -69,7 +92,7 @@ const Game: FC<Props> = ({route}) => {
     if (victory) {
       setCurrentWinner(player);
     }
-  }, [victory]);
+  }, [victory, player]);
   useEffect(() => {
     if (player === 1) {
       Animated.timing(animatedColor, {
@@ -85,7 +108,7 @@ const Game: FC<Props> = ({route}) => {
         useNativeDriver: true,
       }).start();
     }
-  }, [player]);
+  }, [player, animatedColor]);
 
   const handlePressTile: HandlePressTile =
     ({rowIndex, index, item}) =>
@@ -95,28 +118,26 @@ const Game: FC<Props> = ({route}) => {
         return null;
       }
       const newRowState: Array<number> = [];
-      boardState[rowIndex].map((item, index) => {
-        if (index === itemIndex) {
+      boardState[rowIndex].map((rItem, rIndex) => {
+        if (rIndex === itemIndex) {
           newRowState.push(player);
         } else {
-          newRowState.push(item);
+          newRowState.push(rItem);
         }
       });
       const newState: Array<Array<number>> = [];
-      boardState.map((item, index) => {
-        if (index === rowIndex) {
+      boardState.map((bItem, bIndex) => {
+        if (bIndex === rowIndex) {
           newState.push(newRowState);
         } else {
-          newState.push(item);
+          newState.push(bItem);
         }
       });
 
       setBoardState(newState);
-      const victory: boolean | undefined = checkVictory(newState);
-      if (victory) {
-        const addVictory1 = player === 1 ? 1 : 0;
-        const addVictory2 = player === 2 ? 1 : 0;
-        setVictory(victory);
+      const isVictory: boolean | undefined = checkVictory(newState);
+      if (isVictory) {
+        setVictory(true);
         if (player === 1) {
           setVictoryCount({
             player1: victoryCount.player1 + 1,
@@ -138,45 +159,37 @@ const Game: FC<Props> = ({route}) => {
     };
 
   return (
-    <Animated.View style={{flex: 1, backgroundColor: backgroundColor}}>
+    <Animated.View style={[styles.flex, {backgroundColor: backgroundColor}]}>
       <WinnerModal winner={currentWinner} />
-      <View style={{justifyContent: 'center', flex: 1}}>
+      <View style={styles.view}>
         <Board
           boardState={boardState}
           onPressTile={handlePressTile}
           pressTileDisabled={victory}
         />
         <View
-          style={{
-            flexDirection: 'row',
-            backgroundColor:
-              theme === 'dark' ? colors.midnightDark : colors.simpleWhite,
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            borderWidth: 1,
-            borderColor:
-              theme === 'dark' ? colors.simpleWhite : colors.midnightDark,
-          }}>
+          style={[
+            styles.resultView,
+            {
+              backgroundColor:
+                theme === 'dark' ? colors.midnightDark : colors.simpleWhite,
+
+              borderColor:
+                theme === 'dark' ? colors.simpleWhite : colors.midnightDark,
+            },
+          ]}>
           <View>
             {currentWinner === 1 ? (
               <LottieView
-                style={{
-                  height: 100,
-                  width: 100,
-                }}
+                style={styles.lottieView}
                 source={require('../../assets/celebration.json')}
                 autoPlay
                 loop
               />
             ) : (
-              <View
-                style={{
-                  height: 100,
-                  width: 100,
-                }}
-              />
+              <View style={styles.lottieView} />
             )}
-            <View style={{position: 'absolute', top: 38, left: 38}}>
+            <View style={styles.iconView}>
               <FontAwesomeIcon
                 size={24}
                 icon={faUser}
@@ -185,42 +198,36 @@ const Game: FC<Props> = ({route}) => {
             </View>
           </View>
           <Text
-            style={{
-              fontSize: 24,
-              color: colors.lightTurchese,
-              fontWeight: 'bold',
-            }}>
+            style={[
+              styles.text,
+              {
+                color: colors.lightTurchese,
+              },
+            ]}>
             {victoryCount.player1.toString()}
           </Text>
 
           <Text
-            style={{
-              fontSize: 24,
-              color: colors.cerisePink,
-              fontWeight: 'bold',
-            }}>
+            style={[
+              styles.text,
+              {
+                color: colors.cerisePink,
+              },
+            ]}>
             {victoryCount.player2.toString()}
           </Text>
           <View>
             {currentWinner === 2 ? (
               <LottieView
-                style={{
-                  height: 100,
-                  width: 100,
-                }}
+                style={styles.lottieView}
                 source={require('../../assets/celebration.json')}
                 autoPlay
                 loop
               />
             ) : (
-              <View
-                style={{
-                  height: 100,
-                  width: 100,
-                }}
-              />
+              <View style={styles.lottieView} />
             )}
-            <View style={{position: 'absolute', top: 38, left: 38}}>
+            <View style={styles.iconView}>
               <FontAwesomeIcon
                 size={24}
                 icon={faUser}
@@ -231,23 +238,16 @@ const Game: FC<Props> = ({route}) => {
         </View>
       </View>
 
-      <TouchableOpacity
-        onPress={handleStartNewGame}
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          backgroundColor: colors.lemonYellow,
-          width: '100%',
-        }}>
+      <TouchableOpacity onPress={handleStartNewGame} style={styles.button}>
         <Text
-          style={{
-            color: colors.midnightDark,
-            fontSize: 20,
-            alignSelf: 'center',
-            paddingVertical: 20,
-            paddingBottom: insets.bottom ? insets.bottom : 20,
-            fontWeight: 'bold',
-          }}>
+          style={[
+            styles.buttonText,
+            insets.bottom
+              ? {
+                  paddingBottom: insets.bottom,
+                }
+              : null,
+          ]}>
           New game
         </Text>
       </TouchableOpacity>
