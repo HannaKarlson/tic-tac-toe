@@ -42,4 +42,4 @@ npx react-native run-ios
 
 ## Thanks to
 
-Björn that helped me debug the project 
+Björn that helps me with ideas, debug and design of the project
